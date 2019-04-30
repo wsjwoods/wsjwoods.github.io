@@ -1,0 +1,597 @@
+---
+layout:     post
+title:      "Java基础"
+subtitle:   "Java基础介绍"
+date:       2015-10-22
+author:     "Woods"
+header-img: "img/post-bg-js-version.jpg"
+tags:
+    - Java
+---
+@[toc]
+## 1.HashMap实现原理
+简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加等操作很快，仅需一次寻址即可；如果定位到的数组包含链表，对于添加操作，其时间复杂度为O(n)，首先遍历链表，存在即覆盖，否则新增；对于查找操作来讲，仍需遍历链表，然后通过key对象的equals方法逐一比对查找。所以，性能考虑，HashMap中的链表出现越少，性能才会越好。
+
+## 2.Hash冲突如何解决
+然而万事无完美，如果两个不同的元素，通过哈希函数得出的实际存储地址相同怎么办？也就是说，当我们对某个元素进行哈希运算，得到一个存储地址，然后要进行插入的时候，发现已经被其他元素占用了，其实这就是所谓的哈希冲突，也叫哈希碰撞。前面我们提到过，哈希函数的设计至关重要，好的哈希函数会尽可能地保证 计算简单和散列地址分布均匀,但是，我们需要清楚的是，数组是一块连续的固定长度的内存空间，再好的哈希函数也不能保证得到的存储地址绝对不发生冲突。那么哈希冲突如何解决呢？哈希冲突的解决方案有多种:开放定址法（发生冲突，继续寻找下一块未被占用的存储地址），再散列函数法，链地址法，而HashMap即是采用了链地址法，也就是数组+链表的方式
+
+## 3.Overwrite,overload，override 区别
+上面的@override是什么意思呢？结合类来看，肯定一目了然就是说，该类的该方法实现了接口的方法。所以可以说叫：实现-实现了接口方法。
+
+override：覆写是对接口方法名实现
+
+overload：重载 同一个类里同一个方法名，有不同入参
+
+overwrite：重写 重写父类所属方法
+
+## 4、继承-子类，父类
+### 1. 概念 
+继承是从已有的类中派生出已有的类，继承来的类能吸收已有类的非私有属性和方法（行为），并能扩展新的属性和方法。通俗来说，继承就是分为了父类和子类，父类有时也成为超类（super class），子类又成为派生类；子类继承了父类的属性和方法，并且具有了父类所没有的。
+
+### 2. 限制 
+（1）Java的继承只能是单继承，一个子类只能继承一个父类； 
+（2）Java的继承允许多层继承，即子类又是另一个类的父类（可以理解 为爷爷、爸爸与儿子的关系）；
+
+### 3.继承中初始化的顺序
+属性、方法、构造方法和自由块都是类中的成员，在创建类的对象时，类中各成员的执行顺序：
+
+1.父类静态成员和静态初始化快，按在代码中出现的顺序依次执行。 
+
+2.子类静态成员和静态初始化块，按在代码中出现的顺序依次执行。
+
+3.父类的实例成员和实例初始化块，按在代码中出现的顺序依次执行。
+
+4.执行父类的构造方法。 
+
+5.子类实例成员和实例初始化块，按在代码中出现的顺序依次执行。
+
+6.执行子类的构造方法。
+
+## 5、	接口、抽象类的区别
+接口和抽象类的概念不一样。接口是对动作的抽象，抽象类是对根源的抽象。
+
+一个类只能继承一个类（抽象类）(正如人不可能同时是生物和非生物),但是可以实现多个接口(吃饭接口、走路接口)。
+
+1、抽象类和接口都不能直接实例化，如果要实例化，抽象类变量必须指向实现所有抽象方法的子类对象，接口变量必须指向实现所有接口方法的类对象。
+
+2、抽象类要被子类继承，接口要被类实现。
+
+3、接口只能做方法申明，抽象类中可以做方法申明，也可以做方法实现
+
+4、接口里定义的变量只能是公共的静态的常量，抽象类中的变量是普通变量。
+
+5、抽象类里的抽象方法必须全部被子类所实现，如果子类不能全部实现父类抽象方法，那么该子类只能是抽象类。同样，一个实现接口的时候，如不能全部实现接口方法，那么该类也只能为抽象类。
+
+6、抽象方法只能申明，不能实现，接口是设计的结果 ，抽象类是重构的结果
+
+7、抽象类里可以没有抽象方法
+
+8、如果一个类里有抽象方法，那么这个类只能是抽象类
+
+9、抽象方法要被实现，所以不能是静态的，也不能是私有的。
+
+10、接口可继承接口，并可多继承接口，但类只能单根继承。
+
+## 6、多线程实现方式
+Java多线程实现方式主要有四种：继承Thread类、实现Runnable接口、实现Callable接口通过FutureTask包装器来创建Thread线程、使用ExecutorService、Callable、Future实现有返回结果的多线程。
+
+其中前两种方式线程执行完后都没有返回值，后两种是带返回值的
+
+### 1、继承Thread类创建线程
+Thread类本质上是实现了Runnable接口的一个实例，代表一个线程的实例。启动线程的唯一方法就是通过Thread类的start()实例方法。start()方法是一个native方法，它将启动一个新线程，并执行run()方法。这种方式实现多线程很简单，通过自己的类直接extend Thread，并复写run()方法，就可以启动新线程并执行自己定义的run()方法。例如：
+
+```
+public class MyThread extends Thread {  
+　　public void run() {  
+　　 System.out.println("MyThread.run()");  
+　　}  
+}  
+ 
+MyThread myThread1 = new MyThread();  
+MyThread myThread2 = new MyThread();  
+myThread1.start();  
+myThread2.start();  
+```
+
+### 2、实现Runnable接口创建线程
+如果自己的类已经extends另一个类，就无法直接extends Thread，此时，可以实现一个Runnable接口，如下：
+```
+public class MyThread extends OtherClass implements Runnable {  
+　　public void run() {  
+　　 System.out.println("MyThread.run()");  
+　　}  
+}  
+```
+为了启动MyThread，需要首先实例化一个Thread，并传入自己的MyThread实例：
+```
+MyThread myThread = new MyThread();  
+Thread thread = new Thread(myThread);  
+thread.start();  
+```
+事实上，当传入一个Runnable target参数给Thread后，Thread的run()方法就会调用`target.run()`，参考JDK源代码：
+```
+public void run() {  
+　　if (target != null) {  
+　　 target.run();  
+　　}  
+}  
+```
+
+### 3、实现Callable接口通过FutureTask包装器来创建Thread线程
+Callable接口（也只有一个方法）定义如下：   
+```
+public interface Callable<V>   { 
+  V call（） throws Exception;   } 
+```
+```
+public class SomeCallable<V> extends OtherClass implements Callable<V> {
+
+    @Override
+    public V call() throws Exception {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+}
+```
+```
+Callable<V> oneCallable = new SomeCallable<V>();   
+//由Callable<Integer>创建一个FutureTask<Integer>对象：   
+FutureTask<V> oneTask = new FutureTask<V>(oneCallable);   
+//注释：FutureTask<Integer>是一个包装器，它通过接受Callable<Integer>来创建，它同时实现了Future和Runnable接口。 
+  //由FutureTask<Integer>创建一个Thread对象：   
+Thread oneThread = new Thread(oneTask);   
+oneThread.start();   
+//至此，一个线程就创建完成了。
+```
+
+### 4、使用ExecutorService、Callable、Future实现有返回结果的线程
+
+ExecutorService、Callable、Future三个接口实际上都是属于Executor框架。返回结果的线程是在JDK1.5中引入的新特征，有了这种特征就不需要再为了得到返回值而大费周折了。而且自己实现了也可能漏洞百出。
+
+可返回值的任务必须实现Callable接口。类似的，无返回值的任务必须实现Runnable接口。
+
+执行Callable任务后，可以获取一个Future的对象，在该对象上调用get就可以获取到Callable任务返回的Object了。
+
+注意：get方法是阻塞的，即：线程无返回结果，get方法会一直等待。
+
+再结合线程池接口ExecutorService就可以实现传说中有返回结果的多线程了。
+
+下面提供了一个完整的有返回结果的多线程测试例子，在JDK1.5下验证过没问题可以直接使用。代码如下：
+
+```
+import java.util.concurrent.*;  
+import java.util.Date;  
+import java.util.List;  
+import java.util.ArrayList;  
+  
+/** 
+* 有返回值的线程 
+*/  
+@SuppressWarnings("unchecked")  
+public class Test {  
+public static void main(String[] args) throws ExecutionException,  
+    InterruptedException {  
+   System.out.println("----程序开始运行----");  
+   Date date1 = new Date();  
+  
+   int taskSize = 5;  
+   // 创建一个线程池  
+   ExecutorService pool = Executors.newFixedThreadPool(taskSize);  
+   // 创建多个有返回值的任务  
+   List<Future> list = new ArrayList<Future>();  
+   for (int i = 0; i < taskSize; i++) {  
+    Callable c = new MyCallable(i + " ");  
+    // 执行任务并获取Future对象  
+    Future f = pool.submit(c);  
+    // System.out.println(">>>" + f.get().toString());  
+    list.add(f);  
+   }  
+   // 关闭线程池  
+   pool.shutdown();  
+  
+   // 获取所有并发任务的运行结果  
+   for (Future f : list) {  
+    // 从Future对象上获取任务的返回值，并输出到控制台  
+    System.out.println(">>>" + f.get().toString());  
+   }  
+  
+   Date date2 = new Date();  
+   System.out.println("----程序结束运行----，程序运行时间【"  
+     + (date2.getTime() - date1.getTime()) + "毫秒】");  
+}  
+}  
+  
+class MyCallable implements Callable<Object> {  
+private String taskNum;  
+  
+MyCallable(String taskNum) {  
+   this.taskNum = taskNum;  
+}  
+  
+public Object call() throws Exception {  
+   System.out.println(">>>" + taskNum + "任务启动");  
+   Date dateTmp1 = new Date();  
+   Thread.sleep(1000);  
+   Date dateTmp2 = new Date();  
+   long time = dateTmp2.getTime() - dateTmp1.getTime();  
+   System.out.println(">>>" + taskNum + "任务终止");  
+   return taskNum + "任务返回运行结果,当前任务时间【" + time + "毫秒】";  
+}  
+}  
+```
+ 
+
+代码说明：
+上述代码中Executors类，提供了一系列工厂方法用于创建线程池，返回的线程池都实现了ExecutorService接口。
+`public static ExecutorService newFixedThreadPool(int nThreads) `
+创建固定数目线程的线程池。
+`public static ExecutorService newCachedThreadPool() `
+创建一个可缓存的线程池，调用execute 将重用以前构造的线程（如果线程可用）。如果现有线程没有可用的，则创建一个新线程并添加到池中。终止并从缓存中移除那些已有 60 秒钟未被使用的线程。
+`public static ExecutorService newSingleThreadExecutor() `
+创建一个单线程化的Executor。
+`public static ScheduledExecutorService newScheduledThreadPool(int corePoolSize) `
+创建一个支持定时及周期性的任务执行的线程池，多数情况下可用来替代Timer类。
+
+ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，返回Future。如果Executor后台线程池还没有完成Callable的计算，这调用返回Future对象的get()方法，会阻塞直到计算完成。
+
+
+## 7，synchronized、volatile、Lock
+### synchronized
+synchronized是Java中的关键字，是一种同步锁。有以下几种用法：
+
+1、修饰方法：在范围操作符之后，返回类型声明之前使用。每次只能有一个线程进入该方法，此时线程获得的是成员锁。
+```
+public synchronized void syncMethod() {
+    //doSomething
+}
+```
+
+2、修饰代码块：每次只能有一个线程进入该代码块，此时线程获得的是成员锁。
+```
+public int synMethod(int arg){
+    synchronized(arg) {
+        //doSomething
+    }
+}
+```
+3、修饰对象：如果当前线程进入，那么其他线程在该类所有对象上的任何操作都不能进行，此时当前线程获得的是对象锁。
+```
+public class SyncThread implements Runnable {
+    public static void main(String args[]) {
+        SyncThread syncThread = new SyncThread();
+        Thread therad1 = new Thread(syncThread, "therad1");
+        Thread therad2 = new Thread(syncThread, "therad2");
+        Thread therad3 = new Thread(syncThread, "therad3");
+        therad1.start();
+        therad2.start();
+        therad3.start();
+    }
+    public void run() {
+        synchronized (this) {
+            System.out.println(Thread.currentThread().getName());
+        }
+    }
+}
+```
+4、修饰类：如果当前线程进入，那么其他线程在该类中所有操作不能进行，包括静态变量和静态方法，此时当前线程获得的是对象锁。
+```
+public class syncClass {
+    public void method() {
+        synchronized(syncClass.class) {
+            //doSomething
+        }
+    }
+}
+```
+
+### volatile
+
+volatile 关键字的作用是禁止指令的重排序，强制从公共堆栈中取得变量的值，而不是从线程私有的数据栈中取变量的值。 
+volatile与synchronized的区别如下：
+
+volatile 不会发生线程阻塞，而 synchronized 会发生线程阻塞。
+
+volatile 只能修饰变量，而 synchronized 可以修饰方法、代码块等。
+
+volatile 不能保证原子性（不能保证线程安全），而 synchronized 可以保证原子性。
+volatile 解决的是变量在多线程之间的可见性，而 synchronized 解决的是多线程之间访问资源的同步性。
+### lock
+synchronized是隐式锁，在需要同步的对象中加入此控制，而lock是显示锁，需要显示指定起始位置和终止位置。
+
+
+使用lock时在finally中必须释放锁，不然容易造成线程死锁；而使用synchronized时，获取锁的线程会在执行完同步代码后释放锁（或者JVM会在线程执行发生异常时释放锁）。
+使用lock时线程不会一直等待；而使用synchronized时，假设A线程获得锁后阻塞，其他线程会一直等待。
+lock可重入、可中断、可公平也可不公平；而synchronized可重入但不可中断、非公平。 
+
+
+
+## 8，Exception 和 Error的区别
+Exception 和 Error 都是继承了 Throwable 类，在 Java 中只有 Throwable 类型的实例才可以被抛出（throw）或者捕获（catch），它是异常处理机制的基本组成类型。
+
+Exception 和 Error 体现了 Java 平台设计者对不同异常情况的分类。Exception 是程序正常运行中，可以预料的意外情况，可能并且应该被捕获，进行相应处理。
+
+Error 是指在正常情况下，不大可能出现的情况，绝大部分的 Error 都会导致程序（比如 JVM自身）处于非正常的、不可恢复状态。既然是非正常情况，所以不便于也不需要捕获，常见的比如 OutOfMemoryError 之类，都是 Error 的子类。
+
+Exception 又分为检查型（checked）异常和非检查型（unchecked）异常，检查型异常在源代码里必须显式地进行捕获处理，这是编译期检查的一部分。
+
+非检查型异常就是所谓的运行时异常，均继承于RuntimeException，类似 NullPointerException、ArrayIndexOutOfBoundsException 之类，通常是可以编码避免的逻辑错误，具体根据需要来判断是否需要捕获，并不会在编译期强制要求。
+
+
+## 9，集合区别  ArrayList ,linkList ,集合有哪些（）list Map set
+![image](https://img-blog.csdn.net/20180906153409389?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTY1NzczMA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
+从继承体系可以看到，ArrayList与LinkedList都是Collection接口下List接口的实现类。可谓是一对双胞胎。
+
+但由于底层数据结构的不同导致ArrayList与LinkedList有本质上的区别。
+
+### ArrayList：
+
+ArrayList是基于动态数组的数据结构。
+
+因为是数组，所以ArrayList在初始化的时候，有初始大小10，插入新元素的时候，会判断是否需要扩容，扩容的步长是0.5倍原容量，扩容方式是利用数组的复制，因此有一定的开销；
+
+另外，ArrayList在进行元素插入的时候，需要移动插入位置之后的所有元素，位置越靠前，需要位移的元素越多，开销越大，相反，插入位置越靠后的话，开销就越小了，如果在最后面进行插入，那就不需要进行位移；
+
+### LinkedList：
+
+内部使用基于链表的数据结构实现存储，LinkedList有一个内部类作为存放元素的单元，里面有三个属性，用来存放元素本身以及前后2个单元的引用，另外LinkedList内部还有一个header属性，用来标识起始位置，LinkedList的第一个单元和最后一个单元都会指向header，因此形成了一个双向的链表结构。
+
+LinkedList是采用双向链表实现的。所以它也具有链表的特点，每一个元素（结点）的地址不连续，通过引用找到当前结点的上一
+个结点和下一个结点，即插入和删除效率较高，只需要常数时间，而get和set则较为低效。
+
+LinkedList的方法和使用和ArrayList大致相同，由于LinkedList是链表实现的，所以额外提供了在头部和尾部添加/删除元素的方法，也没有ArrayList扩容的问题了。另外，ArrayList和LinkedList都可以实现栈、队列等数据结构，但LinkedList本身实现了队列的接口，所以更推荐用LinkedList来实现队列和栈。
+
+## 10、String， StringBuilder ,Stringbuffer 区别
+String 字符串常量
+StringBuffer 字符串变量（线程安全）
+StringBuilder 字符串变量（非线程安全）
+
+## 11、list,ArrayList,linkList,Map,vectory,set
+list、set、map的区别
+list和set都是继承collection接口，map不是
+
+list数据是有放入顺序的，数据可以重复，set是无放入顺序的，顺序是根据该数据的hashcode决定的，set中的数据不可重复，重复将会覆盖；
+
+list支持for循环和下标遍历，因为是有序的，set只能通过迭代器遍历
+
+set检索数据效率不高，插入删除效率高，并且不会引起数组的位置变化
+
+list可以动态增长，查找效率高，插入删除效率低下，因为会引起数据位置的变化
+map适合存储键值对数据
+
+线程安全方面：
+lingklist、ArrayList和HashSet是非线程安全的，vectory是线程安全的；
+
+hashmap是非线程安全的，hashtable是线程安全的；
+
+ArrayList 和 LinkedList 的区别和应用场景
+ArrayList
+
+优点，ArrayList实现了基于动态数组的数据结构，因为是连续放置的，所以查询的效率很高
+
+缺点：因为是连续放置的，插入删除的时候需要移动数据，效率低下
+
+LinkedList
+
+优点：LinkedList是基于链表的数据结构，因为数据存放位置不是连续的，删除和插入占优势
+
+缺点：查询的时候需要移动指针，效率低下
+适用的场景，当对数据进行查询的时候，需要用ArrayList，要对数据进行多次删除增加的时候用LinkedList有优势；
+
+## 12、JAVA深拷贝 浅拷贝
+浅拷贝---能复制变量，如果对象内还有对象，则只能复制对象的地址
+
+深拷贝---能复制变量，也能复制当前对象的 内部对象
+
+### 代码范例
+```
+public class mytest {
+	public static void main(String[] args) {
+        Parent item1 = new Parent("john", 10);
+        Parent item2 = item1.clone();
+        
+    	System.out.println("parent1 = " + item1.toString());
+    	System.out.println("parent2 = " + item2.toString());
+	}
+	
+	public static class Parent implements Cloneable{
+		String name = "";
+		int age = 0;
+		Parent (String n, int age){
+			this.name = n;
+			this.age = age;
+		}
+ 
+		public void setName(String na) {
+			name = na;
+		}
+		@Override
+	    protected Parent clone() {
+			Parent clone = null;
+	        try {
+	            clone = (Parent) super.clone();
+	        } catch (CloneNotSupportedException e){
+	            throw new RuntimeException(e); // won't happen
+	        }
+	        
+	        return clone;
+	     }
+		
+		public String toString() {
+			return "Parent[" + name + "===" + age + "];";
+		}
+	}
+}
+```
+
+测试结果：
+```
+parent1 = Parent[john===10];
+parent2 = Parent[john===10];
+```
+Parent1被复制了一份。
+
+### 修改下main函数
+```
+public static void main(String[] args){
+    Parent item1 = new Parent("john",10);
+    Parent item2 = item1.clone();
+    
+    item1.setName("alice-john");
+    
+    System.out.println("parent1 = " + item1.toString());
+    System.out.println("parent2 = " + item2.toString());    
+    
+}
+```
+
+测试结果：
+```
+parent1 = Parent[alice-john===10];
+parent2 = Parent[john===10];
+```
+
+发现parent1被修改了，但是parent2并未收到影响
+
+## 13、内存泄漏
+
+## 14、JAVA可重用锁
+所谓重入锁，指的是以线程为单位，当一个线程获取对象锁之后，这个线程可以再次获取本对象上的锁，而其他的线程是不可以的。
+
+synchronized 和   ReentrantLock 都是可重入锁。
+
+可重入锁的意义在于防止死锁。
+
+实现原理是通过为每个锁关联一个请求计数器和一个占有它的线程。当计数为0时，认为锁是未被占有的；线程请求一个未被占有的锁时，JVM将记录锁的占有者，并且将请求计数器置为1 。
+
+如果同一个线程再次请求这个锁，计数将递增；
+
+每次占用线程退出同步块，计数器值将递减。直到计数器为0,锁被释放。
+
+关于父类和子类的锁的重入:子类覆写了父类的synchonized方法，然后调用父类中的方法，此时如果没有重入的锁，那么这段代码将产生死锁（很好理解吧）。
+
+例子：
+
+比如说A类中有个方法
+```
+public synchronized methodA1(){
+
+        methodA2();
+
+}
+```
+而且
+```
+public synchronized methodA2(){
+
+                    //具体操作
+
+}
+```
+
+也是A类中的同步方法，当当前线程调用A类的对象methodA1同步方法，如果其他线程没有获取A类的对象锁，那么当前线程就获得当前A类对象的锁，然后执行methodA1同步方法，方法体中调用methodA2同步方法，当前线程能够再次获取A类对象的锁，而其他线程是不可以的，这就是可重入锁。
+
+ 
+
+代码演示：
+
+不可重入锁：
+```
+public class Lock{
+    private boolean isLocked = false;
+    public synchronized void lock() throws InterruptedException{
+        while(isLocked){    
+            wait();
+        }
+        isLocked = true;
+    }
+    public synchronized void unlock(){
+        isLocked = false;
+        notify();
+    }
+}
+```
+使用该锁：
+```
+public class Count{
+    Lock lock = new Lock();
+    public void print(){
+        lock.lock();
+        doAdd();
+        lock.unlock();
+    }
+    public void doAdd(){
+        lock.lock();
+        //do something
+        lock.unlock();
+    }
+}
+```
+当前线程执行print()方法首先获取lock，接下来执行doAdd()方法就无法执行doAdd()中的逻辑，必须先释放锁。这个例子很好的说明了不可重入锁。
+
+可重入锁：
+
+接下来，我们设计一种可重入锁
+```
+public class Lock{
+    boolean isLocked = false;
+    Thread  lockedBy = null;
+    int lockedCount = 0;
+    public synchronized void lock()
+            throws InterruptedException{
+        Thread thread = Thread.currentThread();
+        while(isLocked && lockedBy != thread){
+            wait();
+        }
+        isLocked = true;
+        lockedCount++;
+        lockedBy = thread;
+    }
+    public synchronized void unlock(){
+        if(Thread.currentThread() == this.lockedBy){
+            lockedCount--;
+            if(lockedCount == 0){
+                isLocked = false;
+                notify();
+            }
+        }
+    }
+}
+```
+所谓可重入，意味着线程可以进入它已经拥有的锁的同步代码块儿。
+
+我们设计两个线程调用print()方法，第一个线程调用print()方法获取锁，进入lock()方法，由于初始lockedBy是null，所以不会进入while而挂起当前线程，而是是增量lockedCount并记录lockBy为第一个线程。接着第一个线程进入doAdd()方法，由于同一进程，所以不会进入while而挂起，接着增量lockedCount，当第二个线程尝试lock，由于isLocked=true,所以他不会获取该锁，直到第一个线程调用两次unlock()将lockCount递减为0，才将标记为isLocked设置为false。
+
+可重入锁的概念和设计思想大体如此，Java中的可重入锁ReentrantLock设计思路也是这样。
+
+ 
+
+synchronized和ReentrantLock 都是可重入锁。ReentrantLock与synchronized比较：
+
+1.前者使用灵活，但是必须手动开启和释放锁
+
+2.前者扩展性好，有时间锁等候（tryLock( )），可中断锁等候（lockInterruptibly( )），锁投票等，适合用于高度竞争锁和多个条件变量的地方
+
+3.前者提供了可轮询的锁请求，可以尝试去获取锁（tryLock( )），如果失败，则会释放已经获得的锁。有完善的错误恢复机制，可以避免死锁的发生。
+
+## 15、多态  接口。实现类
+多态的定义：指允许不同类的对象对同一消息做出响应。即同一消息可以根据发送对象的不同而采用多种不同的行为方式。（发送消息就是函数调用）
+
+List list;是在栈区开辟一个空间放list引用，并没有创建对象所以不知道ArrayList还是LinkedList当你list= new ArrayList(); 就创建了ArrayList对象。并且把开始创建的list引用指向这个对象ArrayList和LinkedList都是List的实现类。
+
+为什么一般都使用 List list = new ArrayList() ,而不用 ArrayList alist = new ArrayList()呢？
+
+问题就在于List有多个实现类，如 LinkedList或者Vector等等，现在你用的是ArrayList，也许哪一天你需要换成其它的实现类呢？，这时你只要改变这一行就行了：List list = new LinkedList(); 其它使用了list地方的代码根本不需要改动。假设你开始用 ArrayList alist = new ArrayList(), 这下你有的改了，特别是如果你使用了 ArrayList特有的方法和属性。 ,如果没有特别需求的话,最好使用List list = new LinkedList(); ,便于程序代码的重构. 这就是面向接口编程的好处
+
+注意事项
+
+list只能使用ArrayList中已经实现了的List接口中的方法，ArrayList中那些自己的、没有在List接口定义的方法是不可以被访问到的
+
+list.add()其实是List接口的方法
+
+但是调用ArrayList的方法如 clone()方法是调用不到的
+
+接口的灵活性就在于“规定一个类必须做什么，而不管你如何做”。我们可以定义一个接口类型的引用变量来引用实现接口的类的实例，当这个引用调用方法时，它会根据实际引用的类的实例来判断具体调用哪个方法，这和上述的超类对象引用访问子类对象的机制相似。
+
+## 16、JAVA 拆箱 装箱
+
