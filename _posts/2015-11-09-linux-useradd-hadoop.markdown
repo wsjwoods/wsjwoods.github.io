@@ -1,5 +1,5 @@
 ---
-layout:     keynote
+layout:     post
 title:      "linux新建用户应用于hadoop权限"
 subtitle:   "给其他开发人员创建linux账号并只能操作hdfs指定目录下的文件"
 date:       2015-11-09
@@ -8,7 +8,7 @@ header-img: "img/post-bg-js-version.jpg"
 tags:
     - Linux
     - 大数据
-	- Hadoop
+    - Hadoop
 ---
 
 
