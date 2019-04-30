@@ -71,7 +71,7 @@ ba_track_id: baf66002813b43f0451a318ff1e874d5
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "写写大数据Blog"
 #sidebar-avatar: /img/autor-woods.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
-sidebar-avatar: /img/head-woods1.jpg   
+sidebar-avatar: /img/head-woods2.jpg   
 
 
 # Featured Tags
