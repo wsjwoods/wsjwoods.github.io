@@ -14,8 +14,10 @@ tags:
 
 创建用户组
 `[root@vm ~]# groupadd usergroup1`
+
 创建用户并指定组
 `[root@vm ~]# useradd -d /usr/user1/ -m user1 -g usergroup1`
+
 给用户设置密码
 `[root@vm ~]# passwd user1`
 `123456`

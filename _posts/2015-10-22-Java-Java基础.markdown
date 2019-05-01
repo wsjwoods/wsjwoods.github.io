@@ -8,33 +8,33 @@ header-img: "img/post-bg-js-version.jpg"
 tags:
     - Java
 ---
-1.  [HashMap实现原理](#1.HashMap实现原理)
-2.  [Hash冲突如何解决](#2.Hash冲突如何解决)
-3.  [Overwrite,overload，override 区别](#3.Overwrite,overload，override 区别)
-4.  [继承-子类，父类](#4.继承-子类，父类)
-5.  [接口、抽象类的区别](#5.接口、抽象类的区别)
-6.  [多线程实现方式](#6.多线程实现方式)
-7.  [synchronized、volatile、Lock](#7.synchronized、volatile、Lock)
-8.  [Exception 和 Error的区别](#8.Exception 和 Error的区别)
-9.  [集合区别 ArrayList ,linkList ,集合有哪些（）list Map set](#9.集合区别 ArrayList ,linkList ,集合有哪些（）list Map set)
-10.  [String， StringBuilder ,Stringbuffer 区别](#10.String， StringBuilder ,Stringbuffer 区别)
-11.  [list,ArrayList,linkList,Map,vectory,set](#11.list,ArrayList,linkList,Map,vectory,set)
-12.  [JAVA深拷贝 浅拷贝](#12.JAVA深拷贝 浅拷贝)
-13.  [内存泄漏](#13.内存泄漏)
-14.  [JAVA可重用锁](#14.JAVA可重用锁)
-15.  [多态 接口。实现类](#15.多态 接口。实现类)
-16.  [JAVA 拆箱 装箱](#16.JAVA 拆箱 装箱)
-17.  [原子类](#17.原子类)
+1.  [HashMap实现原理](#HashMap实现原理)
+2.  [Hash冲突如何解决](#Hash冲突如何解决)
+3.  [Overwrite overload override 区别](#overwrite-overload-override区别)
+4.  [继承 子类 父类](#继承-子类-父类)
+5.  [接口、抽象类的区别](#接口-抽象类的区别)
+6.  [多线程实现方式](#多线程实现方式)
+7.  [synchronized、volatile、Lock](#synchronized-volatile-lock)
+8.  [Exception 和 Error的区别](#exception-和-error的区别)
+9.  [集合区别 ArrayList ,linkList ,集合有哪些（）list Map set](#集合区别arrayList-linklist-集合有哪些)
+10.  [String， StringBuilder ,Stringbuffer 区别](#string-stringbuilder-stringbuffer区别)
+11.  [list,ArrayList,linkList,Map,vectory,set](#list-arrayList-linklist-Map-vectory-set)
+12.  [JAVA深拷贝 浅拷贝](#java深拷贝-浅拷贝)
+13.  [内存泄漏](#内存泄漏)
+14.  [JAVA可重用锁](#java可重用锁)
+15.  [多态 接口 实现类](#多态-接口-实现类)
+16.  [JAVA 拆箱 装箱](#java-拆箱-装箱)
+17.  [原子类](#原子类)
 
 
 
-## 1.HashMap实现原理
+## HashMap实现原理
 简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加等操作很快，仅需一次寻址即可；如果定位到的数组包含链表，对于添加操作，其时间复杂度为O(n)，首先遍历链表，存在即覆盖，否则新增；对于查找操作来讲，仍需遍历链表，然后通过key对象的equals方法逐一比对查找。所以，性能考虑，HashMap中的链表出现越少，性能才会越好。
 
-## 2.Hash冲突如何解决
+## Hash冲突如何解决
 然而万事无完美，如果两个不同的元素，通过哈希函数得出的实际存储地址相同怎么办？也就是说，当我们对某个元素进行哈希运算，得到一个存储地址，然后要进行插入的时候，发现已经被其他元素占用了，其实这就是所谓的哈希冲突，也叫哈希碰撞。前面我们提到过，哈希函数的设计至关重要，好的哈希函数会尽可能地保证 计算简单和散列地址分布均匀,但是，我们需要清楚的是，数组是一块连续的固定长度的内存空间，再好的哈希函数也不能保证得到的存储地址绝对不发生冲突。那么哈希冲突如何解决呢？哈希冲突的解决方案有多种:开放定址法（发生冲突，继续寻找下一块未被占用的存储地址），再散列函数法，链地址法，而HashMap即是采用了链地址法，也就是数组+链表的方式
 
-## 3.Overwrite,overload，override 区别
+## Overwrite overload override区别
 上面的@override是什么意思呢？结合类来看，肯定一目了然就是说，该类的该方法实现了接口的方法。所以可以说叫：实现-实现了接口方法。
 
 override：覆写是对接口方法名实现
@@ -43,7 +43,7 @@ overload：重载 同一个类里同一个方法名，有不同入参
 
 overwrite：重写 重写父类所属方法
 
-## 4.继承-子类，父类
+## 继承 子类 父类
 ### 1. 概念 
 继承是从已有的类中派生出已有的类，继承来的类能吸收已有类的非私有属性和方法（行为），并能扩展新的属性和方法。通俗来说，继承就是分为了父类和子类，父类有时也成为超类（super class），子类又成为派生类；子类继承了父类的属性和方法，并且具有了父类所没有的。
 
@@ -66,7 +66,7 @@ overwrite：重写 重写父类所属方法
 
 6.执行子类的构造方法。
 
-## 5.接口、抽象类的区别
+## 接口 抽象类的区别
 接口和抽象类的概念不一样。接口是对动作的抽象，抽象类是对根源的抽象。
 
 一个类只能继承一个类（抽象类）(正如人不可能同时是生物和非生物),但是可以实现多个接口(吃饭接口、走路接口)。
@@ -91,7 +91,7 @@ overwrite：重写 重写父类所属方法
 
 10、接口可继承接口，并可多继承接口，但类只能单根继承。
 
-## 6.多线程实现方式
+## 多线程实现方式
 Java多线程实现方式主要有四种：继承Thread类、实现Runnable接口、实现Callable接口通过FutureTask包装器来创建Thread线程、使用ExecutorService、Callable、Future实现有返回结果的多线程。
 
 其中前两种方式线程执行完后都没有返回值，后两种是带返回值的
@@ -255,7 +255,7 @@ public Object call() throws Exception {
 ExecutoreService提供了submit()方法，传递一个Callable，或Runnable，返回Future。如果Executor后台线程池还没有完成Callable的计算，这调用返回Future对象的get()方法，会阻塞直到计算完成。
 
 
-## 7.synchronized、volatile、Lock
+## synchronized volatile Lock
 ### synchronized
 synchronized是Java中的关键字，是一种同步锁。有以下几种用法：
 
@@ -325,7 +325,7 @@ lock可重入、可中断、可公平也可不公平；而synchronized可重入�
 
 
 
-## 8.Exception 和 Error的区别
+## Exception 和 Error的区别
 Exception 和 Error 都是继承了 Throwable 类，在 Java 中只有 Throwable 类型的实例才可以被抛出（throw）或者捕获（catch），它是异常处理机制的基本组成类型。
 
 Exception 和 Error 体现了 Java 平台设计者对不同异常情况的分类。Exception 是程序正常运行中，可以预料的意外情况，可能并且应该被捕获，进行相应处理。
@@ -337,7 +337,7 @@ Exception 又分为检查型（checked）异常和非检查型（unchecked）异
 非检查型异常就是所谓的运行时异常，均继承于RuntimeException，类似 NullPointerException、ArrayIndexOutOfBoundsException 之类，通常是可以编码避免的逻辑错误，具体根据需要来判断是否需要捕获，并不会在编译期强制要求。
 
 
-## 9.集合区别  ArrayList ,linkList ,集合有哪些（）list Map set
+## 集合区别ArrayList linkList 集合有哪些
 ![image](https://img-blog.csdn.net/20180906153409389?watermark/2/text/aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTY1NzczMA==/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70)
 从继承体系可以看到，ArrayList与LinkedList都是Collection接口下List接口的实现类。可谓是一对双胞胎。
 
@@ -360,12 +360,12 @@ LinkedList是采用双向链表实现的。所以它也具有链表的特点，�
 
 LinkedList的方法和使用和ArrayList大致相同，由于LinkedList是链表实现的，所以额外提供了在头部和尾部添加/删除元素的方法，也没有ArrayList扩容的问题了。另外，ArrayList和LinkedList都可以实现栈、队列等数据结构，但LinkedList本身实现了队列的接口，所以更推荐用LinkedList来实现队列和栈。
 
-## 10.String， StringBuilder ,Stringbuffer 区别
+## String StringBuilder Stringbuffer区别
 String 字符串常量
 StringBuffer 字符串变量（线程安全）
 StringBuilder 字符串变量（非线程安全）
 
-## 11.list,ArrayList,linkList,Map,vectory,set
+## list ArrayList linkList Map vectory set
 list、set、map的区别
 list和set都是继承collection接口，map不是
 
@@ -397,7 +397,7 @@ LinkedList
 缺点：查询的时候需要移动指针，效率低下
 适用的场景，当对数据进行查询的时候，需要用ArrayList，要对数据进行多次删除增加的时候用LinkedList有优势；
 
-## 12.JAVA深拷贝 浅拷贝
+## JAVA深拷贝 浅拷贝
 浅拷贝---能复制变量，如果对象内还有对象，则只能复制对象的地址
 
 深拷贝---能复制变量，也能复制当前对象的 内部对象
@@ -472,7 +472,7 @@ parent2 = Parent[john===10];
 
 发现parent1被修改了，但是parent2并未收到影响
 
-## 13.内存泄漏
+## 内存泄漏
 内存溢出 out of memory，是指程序在申请内存时，没有足够的内存空间供其使用，出现out of memory；
 
 内存泄露 memory leak，是指程序在申请内存后，无法释放已申请的内存空间，一次内存泄露危害可以忽略，但内存泄露堆积后果很严重，无论多少内存,迟早会被占光。
@@ -557,7 +557,7 @@ this.a=a;
 
 显然B采用singleton模式，它持有一个A对象的引用，而这个A类的对象将不能被回收。
 
-## 14.JAVA可重用锁
+## JAVA可重用锁
 所谓重入锁，指的是以线程为单位，当一个线程获取对象锁之后，这个线程可以再次获取本对象上的锁，而其他的线程是不可以的。
 
 synchronized 和   ReentrantLock 都是可重入锁。
@@ -676,7 +676,7 @@ synchronized和ReentrantLock 都是可重入锁。ReentrantLock与synchronized�
 
 3.前者提供了可轮询的锁请求，可以尝试去获取锁（tryLock( )），如果失败，则会释放已经获得的锁。有完善的错误恢复机制，可以避免死锁的发生。
 
-## 15.多态  接口。实现类
+## 多态 接口 实现类
 多态的定义：指允许不同类的对象对同一消息做出响应。即同一消息可以根据发送对象的不同而采用多种不同的行为方式。（发送消息就是函数调用）
 
 List list;是在栈区开辟一个空间放list引用，并没有创建对象所以不知道ArrayList还是LinkedList当你list= new ArrayList(); 就创建了ArrayList对象。并且把开始创建的list引用指向这个对象ArrayList和LinkedList都是List的实现类。
@@ -695,12 +695,12 @@ list.add()其实是List接口的方法
 
 接口的灵活性就在于“规定一个类必须做什么，而不管你如何做”。我们可以定义一个接口类型的引用变量来引用实现接口的类的实例，当这个引用调用方法时，它会根据实际引用的类的实例来判断具体调用哪个方法，这和上述的超类对象引用访问子类对象的机制相似。
 
-## 16.JAVA 拆箱 装箱
+## JAVA 拆箱 装箱
 int 转成 Integer 叫装箱
 反之叫拆箱 
 
 
-## 17.原子类
+## 原子类
 通过AtomicInteger这个原子类来进行分析。我们先来看看对于num++这样的操作AtomicInteger是如何保证其原子性的。
 
 ```
