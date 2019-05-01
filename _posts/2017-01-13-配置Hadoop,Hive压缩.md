@@ -2,7 +2,7 @@
 layout:     post
 title:      "配置Hadoop,Hive的存储与压缩"
 subtitle:   "Orc,Parquet等存储和压缩"
-date:       2016-02-13
+date:       2017-01-13
 author:     "Woods"
 header-img: "img/post-bg-js-version.jpg"
 tags:
