@@ -8,7 +8,26 @@ header-img: "img/post-bg-js-version.jpg"
 tags:
     - Java
 ---
-@[toc]
+1.  [HashMap实现原理](#HashMap实现原理)
+2.  [Hash冲突如何解决](#Hash冲突如何解决)
+3.  [Overwrite,overload，override 区别](#Overwrite,overload，override 区别)
+4.  [继承-子类，父类](#继承-子类，父类)
+5.  [接口、抽象类的区别](#接口、抽象类的区别)
+6.  [多线程实现方式](#多线程实现方式)
+7.  [synchronized、volatile、Lock](#synchronized、volatile、Lock)
+8.  [Exception 和 Error的区别](#Exception 和 Error的区别)
+9.  [集合区别 ArrayList ,linkList ,集合有哪些（）list Map set](#集合区别 ArrayList ,linkList ,集合有哪些（）list Map set)
+10.  [String， StringBuilder ,Stringbuffer 区别](#String， StringBuilder ,Stringbuffer 区别)
+11.  [list,ArrayList,linkList,Map,vectory,set](#list,ArrayList,linkList,Map,vectory,set)
+12.  [JAVA深拷贝 浅拷贝](#JAVA深拷贝 浅拷贝)
+13.  [内存泄漏](#内存泄漏)
+14.  [JAVA可重用锁](#JAVA可重用锁)
+15.  [多态 接口。实现类](#多态 接口。实现类)
+16.  [JAVA 拆箱 装箱](#JAVA 拆箱 装箱)
+17.  [原子类](#原子类)
+
+
+
 ## 1.HashMap实现原理
 简单来说，HashMap由数组+链表组成的，数组是HashMap的主体，链表则是主要为了解决哈希冲突而存在的，如果定位到的数组位置不含链表（当前entry的next指向null）,那么对于查找，添加等操作很快，仅需一次寻址即可；如果定位到的数组包含链表，对于添加操作，其时间复杂度为O(n)，首先遍历链表，存在即覆盖，否则新增；对于查找操作来讲，仍需遍历链表，然后通过key对象的equals方法逐一比对查找。所以，性能考虑，HashMap中的链表出现越少，性能才会越好。
 
@@ -594,4 +613,60 @@ list.add()其实是List接口的方法
 接口的灵活性就在于“规定一个类必须做什么，而不管你如何做”。我们可以定义一个接口类型的引用变量来引用实现接口的类的实例，当这个引用调用方法时，它会根据实际引用的类的实例来判断具体调用哪个方法，这和上述的超类对象引用访问子类对象的机制相似。
 
 ## 16、JAVA 拆箱 装箱
+int 转成 Integer 叫装箱
+反之叫拆箱 
 
+
+## 17、原子类
+通过AtomicInteger这个原子类来进行分析。我们先来看看对于num++这样的操作AtomicInteger是如何保证其原子性的。
+
+```
+ /**
+     * Atomically increments by one the current value.
+     *
+     * @return the updated value
+     */
+    public final int incrementAndGet() {
+        for (;;) {
+            int current = get();
+            int next = current + 1;
+            if (compareAndSet(current, next))
+                return next;
+        }
+    }
+    ```
+ 我们来分析下incrementAndGet的逻辑：
+
+　　1.先获取当前的value值
+
+　　2.对value加一
+
+　　3.第三步是关键步骤，调用compareAndSet方法来来进行原子更新操作，这个方法的语义是：
+
+　　　　先检查当前value是否等于current，如果相等，则意味着value没被其他线程修改过，更新并返回true。如果不相等，compareAndSet则会返回false，然后循环继续尝试更新。
+
+　　compareAndSet调用了Unsafe类的compareAndSwapInt方法
+
+复制代码
+/**
+     * Atomically sets the value to the given updated value
+     * if the current value {@code ==} the expected value.
+     *
+     * @param expect the expected value
+     * @param update the new value
+     * @return true if successful. False return indicates that
+     * the actual value was not equal to the expected value.
+     */
+    public final boolean compareAndSet(int expect, int update) {
+        return unsafe.compareAndSwapInt(this, valueOffset, expect, update);
+    }
+复制代码
+　　Unsafe的compareAndSwapInt是个native方法，也就是平台相关的。它是基于CPU的CAS指令来完成的。
+
+    public final native boolean compareAndSwapInt(Object var1, long var2, int var4, int var5);
+CAS(Compare-and-Swap)　　
+　　CAS算法是由硬件直接支持来保证原子性的，有三个操作数：内存位置V、旧的预期值A和新值B，当且仅当V符合预期值A时，CAS用新值B原子化地更新V的值，否则，它什么都不做。
+
+　　CAS的ABA问题
+
+　　当然CAS也并不完美，它存在"ABA"问题，假若一个变量初次读取是A，在compare阶段依然是A，但其实可能在此过程中，它先被改为B，再被改回A，而CAS是无法意识到这个问题的。CAS只关注了比较前后的值是否改变，而无法清楚在此过程中变量的变更明细，这就是所谓的ABA漏洞。 
