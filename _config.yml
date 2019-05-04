@@ -57,8 +57,8 @@ kramdown:
 ba_track_id: baf66002813b43f0451a318ff1e874d5
 #baidu_analytics: 'baf66002813b43f0451a318ff1e874d5'
 # Google Analytics
-#ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-#ga_domain: auto
+ga_track_id: 'UA-139566291-1'            # Format: UA-xxxxxx-xx
+ga_domain: auto
 
 
 
