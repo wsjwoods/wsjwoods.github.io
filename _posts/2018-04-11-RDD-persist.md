@@ -1,13 +1,13 @@
 ---
 layout:     post
 title:      "RDD缓存及序列化缓存"
-subtitle:   "JavaSerializer和KryoSerializer对比
+subtitle:   "JavaSerializer和KryoSerializer对比"
 date:       2018-04-11
 author:     "Woods"
 header-img: "img/post-bg-js-version.jpg"
 tags:
-    - Linux
-    - Sehll
+    - Spark
+    
 ---
 
 #### 1. MEMORY_ONLY and not Serializer
