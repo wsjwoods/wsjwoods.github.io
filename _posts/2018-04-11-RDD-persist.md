@@ -6,9 +6,10 @@ date:       2018-04-11
 author:     "Woods"
 header-img: "img/post-bg-js-version.jpg"
 tags:
-    - Linux
-    - Sehll
+    - Spark
+
 ---
+
 
 #### 1. MEMORY_ONLY and not Serializer
 ![memory_only](https://wsjwoods.github.io/img/in-post/memory_only.png)
