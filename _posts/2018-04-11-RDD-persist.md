@@ -11,10 +11,12 @@ tags:
 ---
     
 
+RDD存到磁盘的文件大小是 4.96M。
+
 #### 1. MEMORY_ONLY and not Serializer
 ![memory_only](https://wsjwoods.github.io/img/in-post/memory_only.png)
 
-使用MEMORY_ONLY 方式缓存，RDD占用内存的大小为22.6M。
+使用MEMORY_ONLY 方式缓存，RDD占用内存的大小为22.6M。比原文件大了4倍左右。
 
 #### 2.MEMORY_ONLY_SER and JavaSerializer
 ![memory_only_javaser](https://wsjwoods.github.io/img/in-post/memory_only_javaser.png)
