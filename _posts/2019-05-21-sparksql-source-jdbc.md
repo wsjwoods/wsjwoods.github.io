@@ -10,15 +10,14 @@ tags:
     - SparkSql
 ---
 
-[TOC]
-
+@[toc]
 ## 环境：
     spark 2.4.0
 
 本文通过源码中JDBC的读取数据库源码解读spark对于外部数据源的处理。
 
 spark读取jdbc数据方法参照[官方网站](http://spark.apache.org/docs/latest/sql-data-sources-jdbc.html)：
-```scala
+```java
 val jdbcDF = spark.read
   .format("jdbc")
   .option("url", "jdbc:postgresql:dbserver")
@@ -29,7 +28,7 @@ val jdbcDF = spark.read
 ```
 
 ## 第一步：DataFrameReader.format
-```scala
+```java
 class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 //...
 def format(source: String): DataFrameReader = {
@@ -41,7 +40,7 @@ def format(source: String): DataFrameReader = {
 ```
 指定source="jdbc"
 ## 第二步：DataFrameReader.option
-```
+```java
 class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 //...
 def option(key: String, value: String): DataFrameReader = {
@@ -54,13 +53,13 @@ def option(key: String, value: String): DataFrameReader = {
 将option中的参数（url,user,pwd等）加入到`extraOptions：scala.collection.mutable.HashMap[String, String]` 中
 
 ## 第三步：DataFrameReader.load
-```
+```java
 class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 //...
   def load(): DataFrame = {
     load(Seq.empty: _*) // force invocation of `load(...varargs...)`
   }
-//...
+//...java
 def load(paths: String*): DataFrame = {
     if (source.toLowerCase(Locale.ROOT) == DDLUtils.HIVE_PROVIDER) {
       throw new AnalysisException("Hive data source can only be used with tables, you can not " +
@@ -99,7 +98,7 @@ cls通过`DataSource.lookupDataSource`方法传入一个source，这里是"jdbc"
 跳转到最后的`loadV1Source(paths: _*)` 这是的paths="Nil$"
 
 ## 第四步：DataFrameReader.loadV1Source()
-```
+```java
 class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 //...
   private def loadV1Source(paths: String*) = {
@@ -117,7 +116,7 @@ class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 }
 ```
 这里会构建一个`DataSource`对象
-```
+```java
 case class DataSource(
     sparkSession: SparkSession,
     className: String, \\"jdbc"
@@ -130,7 +129,7 @@ case class DataSource(
     //...
     private val caseInsensitiveOptions = CaseInsensitiveMap(options) \\实现序列化的Map
 ```
-```
+```java
 DataSource对象属性值是：
 className = "jdbc"
 options = user,pwd，url,dbtale
@@ -141,7 +140,7 @@ caseInsensitiveOptions(实现序列化的Map) = options
 然后调用`DataSource.resolveRelation()`方法
 
 ## 第五步：DataSource.resolveRelation()
-```
+```java
 case class DataSource(//...){
 //...
 def resolveRelation(checkFilesExist: Boolean = true): BaseRelation = {
@@ -247,7 +246,7 @@ def resolveRelation(checkFilesExist: Boolean = true): BaseRelation = {
 }  
 ```
 #### resolveRelation第一部分
-```
+```java
 val relation = (providingClass.newInstance(), userSpecifiedSchema) match {
       // TODO: Throw when too much is given.
       case (dataSource: SchemaRelationProvider, Some(schema)) =>
@@ -269,7 +268,7 @@ providingClass.newInstance()通过source="jdbc"得到的是JdbcRelationProvider,
 userSpecifiedSchema = NONE
 
 所以匹配到第二个case
-```
+```java
 case (dataSource: RelationProvider, None) =>
         dataSource.createRelation(sparkSession.sqlContext, caseInsensitiveOptions)
 ```
@@ -277,7 +276,7 @@ case (dataSource: RelationProvider, None) =>
 然后进入到`JdbcRelationProvider`的`createRelation`方法中。
 
 ## 第六步：==JdbcRelationProvider==.createRelation
-```
+```java
 class JdbcRelationProvider extends CreatableRelationProvider
   with RelationProvider with DataSourceRegister {
 
@@ -308,7 +307,7 @@ class JdbcRelationProvider extends CreatableRelationProvider
 来看看是怎么获得Schema的
 
 getSchema
-```
+```java
 def getSchema(resolver: Resolver, jdbcOptions: JDBCOptions): StructType = {
     val tableSchema = JDBCRDD.resolveTable(jdbcOptions)
     jdbcOptions.customSchema match {
@@ -319,7 +318,7 @@ def getSchema(resolver: Resolver, jdbcOptions: JDBCOptions): StructType = {
   }
 ```
 JDBCRDD.resolveTable
-```
+```java
 def resolveTable(options: JDBCOptions): StructType = {
     val url = options.url
     val table = options.tableOrQuery
@@ -345,13 +344,13 @@ def resolveTable(options: JDBCOptions): StructType = {
 ```
 通过option获取数据库连接
 dialect.getSchemaQuery(table)
-```
+```java
  def getSchemaQuery(table: String): String = {
     s"SELECT * FROM $table WHERE 1=0"
   }
 ```
 
-```
+```java
 def getSchema(
       resultSet: ResultSet,
       dialect: JdbcDialect,
@@ -396,7 +395,7 @@ def getSchema(
 然后使用`JdbcUtils.getSchema`来获取schema信息。
 
 最后返回一个JDBCRelation
-```
+```java
 private[sql] case class JDBCRelation(
     override val schema: StructType,
     parts: Array[Partition],
@@ -410,7 +409,7 @@ private[sql] case class JDBCRelation(
 
 ## 第七步：DataSource.resolveRelation
 #### resolveRelation第二部分
-```
+```java
 def resolveRelation(checkFilesExist: Boolean = true): BaseRelation = {
 //...
    relation match {
@@ -434,7 +433,7 @@ def resolveRelation(checkFilesExist: Boolean = true): BaseRelation = {
     relation
   }
 ```
-之前得到relation = JDBCRelation(user) [numPartitions=1]
+之前得到relation = `JDBCRelation(user) [numPartitions=1]`
 
 `SchemaUtils.checkColumnNameDuplication`检查是否有重复的列名称。
 
@@ -442,7 +441,7 @@ def resolveRelation(checkFilesExist: Boolean = true): BaseRelation = {
 
 ## 第八步：DataFrameReader.loadV1Source返回一个DateFrame
 第四步的loadV1Source
-```
+```java
 class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 //...
   private def loadV1Source(paths: String*) = {
@@ -461,7 +460,7 @@ class DataFrameReader private[sql](sparkSession: SparkSession) extends Logging {
 ```
 
 使用baseRelationToDataFrame返回一个了DataFrame
-```
+```java
 def baseRelationToDataFrame(baseRelation: BaseRelation): DataFrame = {
     Dataset.ofRows(self, LogicalRelation(baseRelation))
   }
@@ -472,7 +471,7 @@ main代码中jdbcDF = 这个DataFrame
 ## 第九步：jdbcDF.show -> ==JDBCRelation==
 show会生成LogicalPlan
 
-```
+```java
 case class DataSourceAnalysis(conf: SQLConf) extends Rule[LogicalPlan] with CastSupport {
 
 def apply(plan: LogicalPlan): Seq[execution.SparkPlan] = plan match {
@@ -498,7 +497,7 @@ val unhandledFilters = relation.unhandledFilters(translatedMap.values.toArray).t
 //...
 ```
 DataSourceAnalysis分别调用了`JDBCRelation`类中的`unhandledFilters`过滤
-```
+```java
 override def unhandledFilters(filters: Array[Filter]): Array[Filter] = {
     if (jdbcOptions.pushDownPredicate) {
       filters.filter(JDBCRDD.compileFilter(_, JdbcDialects.get(jdbcOptions.url)).isEmpty)
@@ -508,7 +507,7 @@ override def unhandledFilters(filters: Array[Filter]): Array[Filter] = {
   }
 ```
 和`buildScan`创建查询
-```
+```java
 override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): RDD[Row] = {
     // Rely on a type erasure hack to pass RDD[InternalRow] back as RDD[Row]
     JDBCRDD.scanTable(
@@ -521,7 +520,7 @@ override def buildScan(requiredColumns: Array[String], filters: Array[Filter]): 
   }
 ```
 JDBCRDD.scanTable
-```
+```java
 def scanTable(
       sc: SparkContext,
       schema: StructType,
@@ -544,7 +543,7 @@ def scanTable(
   }
 ```
 new JDBCRDD
-```
+```java
  /**
    * `columns`, but as a String suitable for injection into a SQL query.
    */
